@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<h2 id="gcd">НОД:</h2>
+<h2 id="primes">Простые числа:</h2>
+<label for="fNum">Введите числа:</label><br/>
+<input type="number" id="fNum" name="fNum"/><br/>
+<input type="number" id="SNum"/><br/>
+<input type="number" id="TNum"/><br/>
+<input type="button" value="Рассчитать" onclick="Calculate()"/></body>
+<script>
+    function IsPrime(num) {
+        if (num > 1){
+        if ((num % 2) == 0) return false;
+        for (n = 3; n < Math.sqrt(num); n++ ){
+            if ((num % n) == 0) return false;
+        }
+        } else return false;
+        return true;
+    }
+
+    function findPrimes(min, max){
+        let text = `\n[${min}, ${max}] : { `;
+        if (min % 2 == 0) {
+            if ((IsPrime(min)) == true) text += k + ', ';
+            min++;
+        }
+        c = 1;
+        for (k = min; k <= max; k+=2 ){
+            if (k > min + 100 * c ) {text += '\n'; c++}
+            if ((IsPrime(k)) == true) text += k + ', ';
+            
+        }
+        document.getElementById("primes").innerText += text + '}';
+    }
+
+    function Evklid(a, b){
+        while (a != b){
+            if (a > b) a-=b;
+            else b-=a;
+        }
+        return a;
+    }
+     let Calculate = () => {    
+         a = parseInt(document.getElementById("fNum").value)
+         b = parseInt(document.getElementById("SNum").value)
+         c1 = parseInt(document.getElementById("TNum").value)
+         if (isNaN(a)) a =2;
+         if (isNaN(b)) b = 591;
+        findPrimes(a , b);
+        document.getElementById("gcd").innerText += `\n[${a}, ${b}] =  ` + Evklid(a , b);
+        document.getElementById("gcd").innerText += `\n[555,591] =  ` + Evklid(555 , 591);
+        if (!isNaN(c1)) 
+        document.getElementById("gcd").innerText += `\n[${a}, ${b}, ${c1}] =  ` + Evklid(Evklid(a , b) , c1);
+    }
+    </script>
+</html>
