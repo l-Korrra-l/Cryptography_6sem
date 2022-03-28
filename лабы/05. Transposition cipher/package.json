@@ -1,0 +1,16 @@
+{
+  "name": "transposition_cipher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.3",
+    "open": "^8.4.0",
+    "windows-1251": "^3.0.4"
+  }
+}

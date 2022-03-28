@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+        <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+    </head>
+    <body>
+        <input type="button" onclick="EncryptMarsh(9)" value="EncryptMarsh"/>
+        <input type="button" onclick="DecryptMarsh(9)" value="DecryptMarsh">
+        <div class="ct-chart ct-golden-section" id="chart"></div>
+        <div class="ct-chart ct-golden-section" id="chartEn"></div>
+    </body>
+        <script>
+            const belAl = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'І', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 
+            'У', 'Ў', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Ы', 'Ь', 'Э', 'Ю', 'Я'];
+            let probability = [];
+            belAl.forEach((e,int) => {
+                probability[int] = 0
+            })
+
+            
+            let getText = (lang) => fetch(lang, {
+                method: "get",
+                cache: "no-cache",
+                mode: "no-cors"
+            }).catch(err => console.log(err))
+
+
+            let EncryptMarsh = async (s) => {
+                let response = await getText('text');
+                let text = (await response.text()).split('');
+                let encr = 'MarshEncr --- ';
+                let k = Math.floor((text.length - 1)/s) + 1;
+                while (text.includes('\t'))
+                text.splice(text.indexOf('\t'), 1);
+                for (i = 0; i <= k; i++) {
+                for (j = 0; j <= s; j++) {
+                    if (text[k*j + i] != undefined)
+                        {
+                            if (belAl.includes(text[k*j + i])) probability[belAl.indexOf(text[k*j + i])] += 1; 
+                            encr += text[k*j + i]
+                            text[k*j + i] = undefined
+                        }
+                    }
+                }
+                fetch('tofile', {
+                    method: "post",
+                    cache: "no-cache",
+                    mode: "no-cors",
+                    body: encr
+                })
+                    .catch(err => console.log(err))
+
+            }
+
+            let DecryptMarsh = async (s) => {
+                let response = await getText('textEn');
+                let text = (await response.text()).split('');
+                while (text.includes('\t'))
+                text.splice(text.indexOf('\t'), 1);
+                let encr = 'MarshDecr --- ';
+                let k = Math.floor((text.length - 1)/s) + 1;
+                k += 1;
+                for (j = 0; j <= s; j++) {
+                for (i = 0; i <= k; i++) {
+                        if (text[s*i + j] != undefined)
+                            {
+                                if (belAl.includes(text[s*i + j])) probability[belAl.indexOf(text[s*i + j])] += 1; 
+                                encr += text[s*i + j]
+                                text[s*i + j] = undefined
+                            }
+                        }
+                    }
+                fetch('tofile', {
+                    method: "post",
+                    cache: "no-cache",
+                    mode: "no-cors",
+                    body: encr
+                })
+                    .catch(err => console.log(err))
+            }
+
+
+           
+        </script>
+    </body>
+</html>
