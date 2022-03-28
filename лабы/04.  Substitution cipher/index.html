@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+        <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+    </head>
+    <body>
+        <input type="button" onclick="CaesarEncrypt()" value="Caesar"/>
+        <input type="button" onclick="CaesarDecrypt()" value="Caesar decr">
+        <input type="button" onclick="TrisEncrypt()" value="Tris"/>
+        <input type="button" onclick="TrisDecrypt()" value="Tris decr">
+        <div class="ct-chart ct-golden-section" id="chart"></div>
+        <div class="ct-chart ct-golden-section" id="chartEn"></div>
+    </body>
+        <script>
+            //const fs = require('fs');
+            const belAl = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'І', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 
+            'У', 'Ў', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Ы', 'Ь', 'Э', 'Ю', 'Я'];
+            let probability = [];
+            belAl.forEach((e,int) => {
+                probability[int] = 0
+            })
+
+            let CreateAlphabet = async (alph, num , key) => {
+                let newAlph = [];
+                keyChars = Array.from(new Set(key.split('')));
+                let filtered = alph.filter(function(value, index, arr){ 
+                    return !keyChars.includes(value);
+                });
+                keyChars.forEach((el)=>{
+                    filtered.splice(num-1, 0, el);
+                })
+                return filtered;
+            }
+
+            let getText = (lang) => fetch(lang, {
+                method: "get",
+                cache: "no-cache",
+                mode: "no-cors"
+            })
+                .catch(err => console.log(err))
+
+            let CaesarEncrypt = async () => {
+                console.time();
+                let response = await getText('text');
+                let text = (await response.text()).split('');
+                length = text.length
+                let al = await CreateAlphabet(belAl, 2, 'інфарматыка'.toLocaleUpperCase());
+                let res = 'ceasarEncr --- ';
+                text.forEach((sym) => {
+                   
+                    if (belAl.includes(sym)) 
+                    {
+                        res += al[belAl.indexOf(sym)];
+                        probability[belAl.indexOf(sym)] += 1; 
+                    }
+                    else res += sym;
+                })
+                belAl.forEach((e,int) => {
+                    probability[int] = probability[int] / belAl.length;
+                })
+                fetch('tofile', {
+                    method: "post",
+                    cache: "no-cache",
+                    mode: "no-cors",
+                    body: res
+                })
+                    .catch(err => console.log(err))
+
+                    new Chartist.Bar('#chart', {
+                        labels: al,
+                        series: [probability]
+                    });
+                    console.timeEnd();
+            }
+
+            let CaesarDecrypt = async () => {
+                console.time();
+                let response = await getText('textDercCes');
+                let text = (await response.text()).split('');
+                length = text.length
+                let al = await CreateAlphabet(belAl, 2, 'інфарматыка'.toLocaleUpperCase());
+                let res = 'ceasarDecr --- ';
+                text.forEach((sym) => {
+                   
+                    if (al.includes(sym)) 
+                    {
+                        res += belAl[al.indexOf(sym)];
+                        probability[belAl.indexOf(sym)] += 1; 
+                    }
+                    else res += sym;
+                })
+                belAl.forEach((e,int) => {
+                    probability[int] = probability[int] / belAl.length;
+                })
+                new Chartist.Bar('#chartEn', {
+                    labels: al,
+                    series: [probability]
+                });
+                fetch('tofile', {
+                    method: "post",
+                    cache: "no-cache",
+                    mode: "no-cors",
+                    body: res
+                })
+                    .catch(err => console.log(err))
+                    console.timeEnd();
+            }
+
+            let TrisEncrypt = async () => {
+                console.time();
+                let response = await getText('text');
+                let text = (await response.text()).split('');
+                length = text.length
+                let res = 'trisEncr --- ';
+                text.forEach((sym, ind) => {
+                    let inn = belAl.indexOf(sym) + ind;
+                    while (inn >= belAl.length) inn = inn - belAl.length;
+                    while (inn < 0) inn = inn + belAl.length;
+                    if (belAl.includes(sym))
+                    {
+                     res += belAl[inn];
+                     probability[belAl.indexOf(sym)] += 1; }
+
+                    else res += sym;
+                })
+                belAl.forEach((e,int) => {
+                    probability[int] = probability[int] / belAl.length;
+                })
+                new Chartist.Bar('#chart', {
+                    labels: belAl,
+                    series: [probability]
+                });
+                fetch('tofile', {
+                    method: "post",
+                    cache: "no-cache",
+                    mode: "no-cors",
+                    body: res
+                })
+                    .catch(err => console.log(err))
+                    console.timeEnd();
+            }
+
+            let TrisDecrypt = async () => {
+                console.time();
+                let response = await getText('textDercTris');
+                let text = (await response.text()).split('');
+                length = text.length
+                let res = 'trisDecr --- ';
+                text.forEach((sym, ind) => {
+                    let inn = belAl.indexOf(sym) - ind;
+                    while (inn >= belAl.length) inn = inn - belAl.length;
+                    while (inn < 0) inn = inn + belAl.length;
+                    if (belAl.includes(sym)) 
+                    {
+                        res += belAl[inn];
+                        probability[belAl.indexOf(sym)] += 1; 
+                    }
+                    else res += sym;
+                })
+                belAl.forEach((e,int) => {
+                    probability[int] = probability[int] / belAl.length;
+                })
+                new Chartist.Bar('#chartEn', {
+                    labels: belAl,
+                    series: [probability]
+                });
+                fetch('tofile', {
+                    method: "post",
+                    cache: "no-cache",
+                    mode: "no-cors",
+                    body: res
+                })
+                    .catch(err => console.log(err))
+                    console.timeEnd();
+            }
+        </script>
+    </body>
+</html>
